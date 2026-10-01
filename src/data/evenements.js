@@ -9,7 +9,6 @@ import evenement01 from "../assets/Evenement01.jpg";
 import assembleeGenerale01 from "../assets/AssembleeGenerale01.jpg";
 import rencontreMultiJeux01 from "../assets/RencontreMultiJeux01.jpg";
 import prochainEvenementADefinir from "../assets/ProchainEvenementADefinir.jpg";
-import test from "../assets/Collectors_Club_TEST.jpg";
 
 const evenements = [
   {
@@ -20,16 +19,6 @@ const evenements = [
     lieu: "A définir",
     affiche: prochainEvenementADefinir,
     description: "A définir",
-  },
-  {
-    id: 999,
-    titre: "Événement test",
-    date: "15 décembre 2026",
-    dateISO: "2026-12-15T00:00:00",
-    heure: "20 h",
-    lieu: "SubCulture",
-    affiche: test,
-    description: "Événement temporaire utilisé pour tester le site.",
   },
   {
     id: 8,
