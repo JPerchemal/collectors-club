@@ -4,7 +4,7 @@ const blocsAssociation = [
     icone: "🎬",
     titre: "Cinéma",
     texte:
-      "Le Collector's Club organise un Ciné-Club en partenariat avec le magasin SubCulture, avec des projections proposées régulièrement tout au long de l'année.",
+      "Le Collector's Club organise un Ciné-Club en partenariat avec le magasin Sub Culture, avec des projections proposées régulièrement tout au long de l'année.",
   },
   {
     id: 1,

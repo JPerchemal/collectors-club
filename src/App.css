@@ -330,3 +330,17 @@
   border: 1px solid var(--couleur-bordure);
   border-radius: 12px;
 }
+
+.logo-partenaire {
+  max-width: 250px;
+  width: 100%;
+  height: auto;
+}
+
+.liste-partenaires {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}

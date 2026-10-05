@@ -1,6 +1,8 @@
 import logo from "../assets/Logo.jpg";
 import BlocAssociation from "../components/BlocAssociation.jsx";
 import blocsAssociation from "../data/blocsAssociation.js";
+import logoSaintJunien from "../assets/LogoSaintJunien.png";
+import logoSubCulture from "../assets/SubCulture.jpg";
 
 function Accueil() {
   return (
@@ -37,6 +39,34 @@ function Accueil() {
         <p className="cotisation">
           Cotisation annuelle : <strong>15 €</strong>
         </p>
+      </section>
+      <section className="partenaires">
+        <h2>Nos partenaires</h2>
+        <div className="liste-partenaires">
+          <a
+            href="https://www.saint-junien.fr/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              className="logo-partenaire"
+              src={logoSaintJunien}
+              alt="Logo de la ville de Saint-Junien"
+            />
+          </a>
+
+          <a
+            href="https://www.facebook.com/p/Sub-Culture-100064876232396/?locale=fr_FR"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              className="logo-partenaire"
+              src={logoSubCulture}
+              alt="Logo de Sub Culture"
+            />
+          </a>
+        </div>
       </section>
     </main>
   );
