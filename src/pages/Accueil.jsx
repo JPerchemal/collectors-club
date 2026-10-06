@@ -39,6 +39,17 @@ function Accueil() {
         <p className="cotisation">
           Cotisation annuelle : <strong>15 €</strong>
         </p>
+        <p className="adresse-association">
+          <strong>Adresse de l'association :</strong>
+          <br />
+          <a
+            href="https://www.google.com/maps/search/?api=1&query=22+rue+Lucien+Dumas+87200+Saint-Junien"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            22 rue Lucien Dumas, 87200 Saint-Junien (chez Sub Culture)
+          </a>
+        </p>
       </section>
       <section className="partenaires">
         <h2>Nos partenaires</h2>

@@ -331,6 +331,20 @@
   border-radius: 12px;
 }
 
+.rejoindre-association .adresse-association {
+  margin-top: 15px;
+}
+
+.adresse-association a {
+  color: var(--couleur-texte);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.adresse-association a:hover {
+  color: var(--couleur-secondaire);
+}
+
 .logo-partenaire {
   max-width: 250px;
   width: 100%;
@@ -343,4 +357,75 @@
   align-items: center;
   gap: 40px;
   flex-wrap: wrap;
+}
+
+.footer {
+  background-color: var(--couleur-principale);
+  color: var(--couleur-texte-clair);
+  padding: 30px 20px;
+}
+
+.footer-contenu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.email-association {
+  color: var(--couleur-texte-clair);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.email-association:hover {
+  color: var(--couleur-secondaire);
+}
+
+.footer-reseaux {
+  display: flex;
+  gap: 20px;
+  font-size: 2rem;
+}
+
+.footer-reseaux a {
+  color: var(--couleur-texte-clair);
+  transition: color 0.3s ease;
+}
+
+.lien-facebook:hover {
+  color: #1877f2;
+}
+
+.info-instagram {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  white-space: nowrap;
+  font-size: 0.9rem;
+  background-color: var(--couleur-surface);
+  color: var(--couleur-principale);
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.instagram-indisponible:hover .info-instagram {
+  display: block;
+}
+
+.instagram-indisponible {
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.instagram-indisponible:hover {
+  color: var(--couleur-secondaire);
+}
+
+@media (max-width: 400px) {
+  .footer-contenu {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
 }
