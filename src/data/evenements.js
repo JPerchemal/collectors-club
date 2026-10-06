@@ -26,7 +26,7 @@ const evenements = [
     date: "25 septembre 2026",
     dateISO: "2026-09-25T00:00:00",
     heure: "21 h",
-    lieu: "SubCulture",
+    lieu: "Sub Culture",
     affiche: evenement08,
     description:
       "Projection d'un film dans notre boutique partenaire SubCulture.",
@@ -37,7 +37,7 @@ const evenements = [
     date: "28 août 2026",
     dateISO: "2026-08-28T00:00:00",
     heure: "21 h",
-    lieu: "SubCulture",
+    lieu: "Sub Culture",
     affiche: evenement07,
     description:
       "Projection d'un film dans notre boutique partenaire SubCulture.",
@@ -48,7 +48,7 @@ const evenements = [
     date: "14 août 2026",
     dateISO: "2026-08-14T00:00:00",
     heure: "A partir de 19h30",
-    lieu: "SubCulture",
+    lieu: "Sub Culture",
     affiche: assembleeGenerale01,
     description:
       "Assemblée Générale du Collector's Club dans notre boutique partenaire SubCulture de notre Souverain et Guide suprême.",
@@ -59,7 +59,7 @@ const evenements = [
     date: "31 juillet 2026",
     dateISO: "2026-07-31T00:00:00",
     heure: "21 h",
-    lieu: "SubCulture",
+    lieu: "Sub Culture",
     affiche: evenement06,
     description:
       "Projection d'un film dans notre boutique partenaire SubCulture.",
@@ -80,7 +80,7 @@ const evenements = [
     date: "29 mai 2026",
     dateISO: "2026-05-29T00:00:00",
     heure: "21 h",
-    lieu: "SubCulture",
+    lieu: "Sub Culture",
     affiche: evenement04,
     description:
       "Projection d'un film dans notre boutique partenaire SubCulture.",
