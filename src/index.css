@@ -1,4 +1,11 @@
 body {
   margin: 0;
   background-color: var(--couleur-fond);
+  padding-top: 125px;
+}
+
+@media (max-width: 600px) {
+  body {
+    padding-top: 165px;
+  }
 }

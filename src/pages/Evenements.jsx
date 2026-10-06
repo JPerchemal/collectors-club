@@ -45,8 +45,6 @@ function Evenements() {
 
   return (
     <main>
-      <h1>Événements</h1>
-
       <section className="evenements">
         <h2 className="titre-evenements-a-venir">Événements à venir</h2>
 
