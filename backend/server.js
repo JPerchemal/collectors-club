@@ -1,5 +1,7 @@
 import http from "node:http";
 import { db } from "./database.js";
+import { randomBytes, createHash } from "node:crypto";
+import { envoyerEmailConfirmation } from "./email.js";
 
 const serveur = http.createServer((requete, reponse) => {
   reponse.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
@@ -1029,7 +1031,6 @@ const serveur = http.createServer((requete, reponse) => {
       );
       return;
     }
-
     try {
       // 2. Suppression de l'événement
       const suppression = db
@@ -1079,8 +1080,437 @@ const serveur = http.createServer((requete, reponse) => {
         }),
       );
     }
+  } else if (
+    url.pathname === "/abonnes/confirmation" &&
+    requete.method === "GET"
+  ) {
+    const tokenRecu = url.searchParams.get("token");
+
+    if (!tokenRecu) {
+      reponse.writeHead(400, {
+        "Content-Type": "application/json",
+      });
+
+      reponse.end(
+        JSON.stringify({
+          erreur: "Jeton de confirmation manquant.",
+        }),
+      );
+
+      return;
+    }
+
+    const formatValide = /^[0-9a-f]{64}$/.test(tokenRecu);
+
+    if (!formatValide) {
+      reponse.writeHead(400, {
+        "Content-Type": "application/json",
+      });
+
+      reponse.end(
+        JSON.stringify({
+          erreur: "Format du jeton de confirmation invalide.",
+        }),
+      );
+
+      return;
+    }
+
+    const tokenHashRecu = createHash("sha256").update(tokenRecu).digest("hex");
+
+    let confirmation;
+    try {
+      const requeteConfirmation = db.prepare(`
+        SELECT *
+        FROM CONFIRMATION_ABONNE
+        WHERE tokenHash = ?
+      `);
+
+      confirmation = requeteConfirmation.get(tokenHashRecu);
+    } catch (erreur) {
+      console.error("Erreur lors de la recherche du jeton :", erreur);
+
+      reponse.writeHead(500, {
+        "Content-Type": "application/json",
+      });
+
+      reponse.end(
+        JSON.stringify({
+          erreur: "Une erreur est survenue lors de la confirmation.",
+        }),
+      );
+
+      return;
+    }
+    // si SQLite ne trouve aucune ligne, .get() renvoie undefined et !undefined vaut true
+    if (!confirmation) {
+      reponse.writeHead(400, {
+        "Content-Type": "application/json",
+      });
+
+      reponse.end(
+        JSON.stringify({
+          erreur: "Jeton de confirmation invalide ou expiré.",
+        }),
+      );
+
+      return;
+    }
+
+    const maintenant = new Date();
+    const expiration = new Date(confirmation.dateExpiration);
+    const jetonExpire = maintenant >= expiration;
+    if (jetonExpire) {
+      reponse.writeHead(400, {
+        "Content-Type": "application/json",
+      });
+
+      reponse.end(
+        JSON.stringify({
+          erreur: "Jeton de confirmation invalide ou expiré.",
+        }),
+      );
+
+      return;
+    }
+
+    const dateConfirmation = new Date().toISOString();
+
+    let transactionActive = false;
+    try {
+      const requeteMiseAJour = db.prepare(`
+        UPDATE ABONNE
+        SET dateConfirmation = ?
+        WHERE email = ?
+      `);
+      const requeteSuppression = db.prepare(`
+        DELETE FROM CONFIRMATION_ABONNE
+        WHERE email = ?
+      `);
+
+      db.exec("BEGIN");
+      transactionActive = true;
+
+      const resultatMiseAJour = requeteMiseAJour.run(
+        dateConfirmation,
+        confirmation.email,
+      );
+      if (resultatMiseAJour.changes !== 1) {
+        throw new Error("Aucun abonné correspondant à confirmer.");
+      }
+
+      const resultatSuppression = requeteSuppression.run(confirmation.email);
+      if (resultatSuppression.changes !== 1) {
+        throw new Error("Le jeton de confirmation n'a pas été supprimé.");
+      }
+
+      db.exec("COMMIT");
+      transactionActive = false;
+
+      reponse.writeHead(200, {
+        "Content-Type": "application/json",
+      });
+
+      reponse.end(
+        JSON.stringify({
+          message: "Votre inscription a été confirmée avec succès.",
+        }),
+      );
+
+      return;
+    } catch (erreur) {
+      if (transactionActive) {
+        try {
+          db.exec("ROLLBACK");
+        } catch (erreurRollback) {
+          console.error("Erreur lors du ROLLBACK :", erreurRollback);
+        }
+      }
+
+      console.error("Erreur lors de la confirmation :", erreur);
+
+      reponse.writeHead(500, {
+        "Content-Type": "application/json",
+      });
+
+      reponse.end(
+        JSON.stringify({
+          erreur: "Une erreur est survenue lors de la confirmation.",
+        }),
+      );
+
+      return;
+    }
+  } else if (url.pathname === "/abonnes" && requete.method === "POST") {
+    // 1. Réception des données
+    let body = "";
+
+    requete.on("data", (morceau) => {
+      body += morceau.toString();
+    });
+
+    requete.on("end", async () => {
+      let abonne;
+
+      // 2. Conversion du JSON
+      try {
+        abonne = JSON.parse(body);
+      } catch {
+        reponse.writeHead(400, {
+          "Content-Type": "application/json",
+        });
+
+        reponse.end(
+          JSON.stringify({
+            erreur: "Le JSON envoyé est invalide.",
+          }),
+        );
+        return;
+      }
+
+      // 3. Vérification de l'objet reçu
+      if (
+        abonne === null ||
+        typeof abonne !== "object" ||
+        Array.isArray(abonne)
+      ) {
+        reponse.writeHead(400, {
+          "Content-Type": "application/json",
+        });
+
+        reponse.end(
+          JSON.stringify({
+            erreur: "Les données doivent être un objet JSON.",
+          }),
+        );
+        return;
+      }
+
+      // 4. Vérification du champ email
+      if (typeof abonne.email !== "string" || !abonne.email.trim()) {
+        reponse.writeHead(400, {
+          "Content-Type": "application/json",
+        });
+
+        reponse.end(
+          JSON.stringify({
+            erreur: "Une adresse e-mail est obligatoire.",
+          }),
+        );
+        return;
+      }
+
+      // 5. Vérification du format de l'adresse e-mail
+      const email = abonne.email.trim().toLowerCase();
+      const formatEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!formatEmail.test(email)) {
+        reponse.writeHead(400, {
+          "Content-Type": "application/json",
+        });
+
+        reponse.end(
+          JSON.stringify({
+            erreur: "Le format de l'adresse e-mail est invalide.",
+          }),
+        );
+        return;
+      }
+
+      // 6. Enregistrement de l'abonné dans SQLite
+      let transactionActive = false;
+      let token = null;
+      try {
+        db.exec("BEGIN");
+        transactionActive = true;
+
+        const dateInscription = new Date().toISOString();
+
+        const resultat = db
+          .prepare(
+            `
+          INSERT OR IGNORE INTO ABONNE (
+            email,
+            dateInscription,
+            dateConfirmation
+          )
+          VALUES (?, ?, ?)
+          `,
+          )
+          .run(email, dateInscription, null);
+
+        const nouvelAbonne = resultat.changes === 1;
+        let abonneExistant = null;
+        if (!nouvelAbonne) {
+          abonneExistant = db
+            .prepare("SELECT dateConfirmation FROM ABONNE WHERE email = ?")
+            .get(email);
+        }
+
+        const abonneNonConfirme =
+          abonneExistant !== null && abonneExistant.dateConfirmation === null;
+        let derniereTentative = null;
+        if (abonneNonConfirme) {
+          derniereTentative = db
+            .prepare(
+              "SELECT dateDernierEnvoi FROM CONFIRMATION_ABONNE WHERE email = ?",
+            )
+            .get(email);
+        }
+
+        const cinqMinutes = 5 * 60 * 1000;
+        let renvoiAutorise = false;
+        if (abonneNonConfirme) {
+          const dateDernierEnvoi = derniereTentative?.dateDernierEnvoi;
+
+          if (dateDernierEnvoi === null || dateDernierEnvoi === undefined) {
+            renvoiAutorise = true;
+          } else {
+            const dernierEnvoi = new Date(dateDernierEnvoi).getTime();
+
+            if (Number.isNaN(dernierEnvoi)) {
+              throw new Error("Date du dernier envoi invalide.");
+            }
+
+            const delaiEcoule = Date.now() - dernierEnvoi;
+
+            renvoiAutorise = delaiEcoule >= cinqMinutes;
+          }
+        }
+
+        const renouvelerConfirmation = db.prepare(`
+          INSERT INTO CONFIRMATION_ABONNE (
+            email,
+            tokenHash,
+            dateExpiration,
+            dateDernierEnvoi
+          )
+          VALUES (?, ?, ?, ?)
+          ON CONFLICT(email) DO UPDATE SET
+            tokenHash = excluded.tokenHash,
+            dateExpiration = excluded.dateExpiration,
+            dateDernierEnvoi = excluded.dateDernierEnvoi
+        `);
+
+        if (nouvelAbonne || (abonneNonConfirme && renvoiAutorise)) {
+          // Génération du jeton de confirmation
+          token = randomBytes(32).toString("hex");
+
+          // Calcul de son empreinte SHA-256
+          const tokenHash = createHash("sha256").update(token).digest("hex");
+
+          const maintenant = Date.now();
+          const dateDernierEnvoi = new Date(maintenant).toISOString();
+
+          // Date d'expiration du jeton : 24 heures
+          const dateExpiration = new Date(
+            maintenant + 24 * 60 * 60 * 1000,
+          ).toISOString();
+
+          renouvelerConfirmation.run(
+            email,
+            tokenHash,
+            dateExpiration,
+            dateDernierEnvoi,
+          );
+        }
+
+        // Validation de la transaction
+        db.exec("COMMIT");
+        transactionActive = false;
+
+        let emailAccepte = false;
+
+        // 7. Envoi de l'e-mail de confirmation
+        if (token !== null) {
+          try {
+            await envoyerEmailConfirmation(email, token);
+            emailAccepte = true;
+          } catch (erreurEmail) {
+            console.error("Erreur lors de l'envoi de l'e-mail :", erreurEmail);
+
+            try {
+              const annulerTentative = db.prepare(`
+                UPDATE CONFIRMATION_ABONNE
+                SET dateDernierEnvoi = NULL
+                WHERE email = ?
+                AND tokenHash = ?
+              `);
+
+              const tokenHash = createHash("sha256")
+                .update(token)
+                .digest("hex");
+
+              const resultatAnnulation = annulerTentative.run(email, tokenHash);
+
+              if (resultatAnnulation.changes === 1) {
+                console.log(
+                  "Réservation de l'envoi annulée après une erreur SMTP.",
+                );
+              } else {
+                console.log(
+                  "Aucune réservation à annuler pour cette tentative.",
+                );
+              }
+            } catch (erreurSQLite) {
+              console.error(
+                "Impossible d'annuler la réservation de l'envoi :",
+                erreurSQLite,
+              );
+            }
+          }
+
+          console.log(
+            emailAccepte
+              ? "E-mail de confirmation accepté par le serveur SMTP."
+              : "Échec de l'envoi de l'e-mail de confirmation.",
+          );
+        }
+
+        // 8. Confirmation de l'inscription
+        const codeHTTP = 202;
+
+        reponse.writeHead(codeHTTP, {
+          "Content-Type": "application/json",
+        });
+
+        reponse.end(
+          JSON.stringify({
+            message: "Votre demande d'inscription a été enregistrée.",
+          }),
+        );
+      } catch (erreur) {
+        if (transactionActive) {
+          try {
+            db.exec("ROLLBACK");
+          } catch (erreurRollback) {
+            console.error("Erreur lors du ROLLBACK :", erreurRollback);
+          }
+        }
+
+        console.error("Erreur lors de l'inscription :", erreur);
+
+        reponse.writeHead(500, {
+          "Content-Type": "application/json",
+        });
+
+        reponse.end(
+          JSON.stringify({
+            erreur: "Impossible d'enregistrer l'inscription.",
+          }),
+        );
+      }
+    });
   } else {
-    reponse.end("Vous êtes sur une autre adresse.");
+    reponse.writeHead(404, {
+      "Content-Type": "application/json",
+    });
+
+    reponse.end(
+      JSON.stringify({
+        erreur: "Route introuvable.",
+      }),
+    );
   }
 });
 

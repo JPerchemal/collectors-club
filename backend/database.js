@@ -10,6 +10,14 @@ db.exec(`
         dateInscription TEXT NOT NULL,
         dateConfirmation TEXT
     );
+    -- Table des jetons de confirmation des abonnés
+    CREATE TABLE IF NOT EXISTS CONFIRMATION_ABONNE (
+        email TEXT PRIMARY KEY NOT NULL,
+        tokenHash TEXT NOT NULL UNIQUE,
+        dateExpiration TEXT NOT NULL,
+        dateDernierEnvoi TEXT,
+        FOREIGN KEY (email) REFERENCES ABONNE(email) ON DELETE CASCADE
+    );
 `);
 
 db.exec(`
