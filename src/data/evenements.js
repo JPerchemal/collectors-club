@@ -1,15 +1,3 @@
-import evenement08 from "../assets/Evenement08.jpg";
-import evenement07 from "../assets/Evenement07.jpg";
-import evenement06 from "../assets/Evenement06.jpg";
-import evenement05 from "../assets/Evenement05.jpg";
-import evenement04 from "../assets/Evenement04.jpg";
-import evenement03 from "../assets/Evenement03.jpg";
-import evenement02 from "../assets/Evenement02.jpg";
-import evenement01 from "../assets/Evenement01.jpg";
-import assembleeGenerale01 from "../assets/AssembleeGenerale01.jpg";
-import rencontreMultiJeux01 from "../assets/RencontreMultiJeux01.jpg";
-import prochainEvenementADefinir from "../assets/ProchainEvenementADefinir.jpg";
-
 const evenements = [
   {
     id: 0,
@@ -17,7 +5,7 @@ const evenements = [
     date: "A définir",
     heure: "A définir",
     lieu: "A définir",
-    affiche: prochainEvenementADefinir,
+    affiche: "/affiches/ProchainEvenementADefinir.jpg",
     description: "A définir",
   },
   {
@@ -27,7 +15,7 @@ const evenements = [
     dateISO: "2026-09-25T00:00:00",
     heure: "21 h",
     lieu: "Sub Culture",
-    affiche: evenement08,
+    affiche: "/affiches/Evenement08.jpg",
     description:
       "Projection d'un film dans notre boutique partenaire SubCulture.",
   },
@@ -38,7 +26,7 @@ const evenements = [
     dateISO: "2026-08-28T00:00:00",
     heure: "21 h",
     lieu: "Sub Culture",
-    affiche: evenement07,
+    affiche: "/affiches/Evenement07.jpg",
     description:
       "Projection d'un film dans notre boutique partenaire SubCulture.",
   },
@@ -49,7 +37,7 @@ const evenements = [
     dateISO: "2026-08-14T00:00:00",
     heure: "A partir de 19h30",
     lieu: "Sub Culture",
-    affiche: assembleeGenerale01,
+    affiche: "/affiches/AssembleeGenerale01.jpg",
     description:
       "Assemblée Générale du Collector's Club dans notre boutique partenaire SubCulture de notre Souverain et Guide suprême.",
   },
@@ -60,7 +48,7 @@ const evenements = [
     dateISO: "2026-07-31T00:00:00",
     heure: "21 h",
     lieu: "Sub Culture",
-    affiche: evenement06,
+    affiche: "/affiches/Evenement06.jpg",
     description:
       "Projection d'un film dans notre boutique partenaire SubCulture.",
   },
@@ -71,7 +59,7 @@ const evenements = [
     dateISO: "2026-06-26T00:00:00",
     heure: "21 h",
     lieu: "Médiathèque, salle Laurentine Teillet",
-    affiche: evenement05,
+    affiche: "/affiches/Evenement05.jpg",
     description: "Projection d'un film à la médiathèque de Saint Junien.",
   },
   {
@@ -81,7 +69,7 @@ const evenements = [
     dateISO: "2026-05-29T00:00:00",
     heure: "21 h",
     lieu: "Sub Culture",
-    affiche: evenement04,
+    affiche: "/affiches/Evenement04.jpg",
     description:
       "Projection d'un film dans notre boutique partenaire SubCulture.",
   },
@@ -92,7 +80,7 @@ const evenements = [
     dateISO: "2026-04-24T00:00:00",
     heure: "21 h",
     lieu: "Médiathèque, salle Laurentine Teillet",
-    affiche: evenement03,
+    affiche: "/affiches/Evenement03.jpg",
     description: "Projection d'un film à la médiathèque de Saint Junien.",
   },
   {
@@ -102,7 +90,7 @@ const evenements = [
     dateISO: "2026-03-27T00:00:00",
     heure: "21 h",
     lieu: "Médiathèque, salle Laurentine Teillet",
-    affiche: evenement02,
+    affiche: "/affiches/Evenement02.jpg",
     description: "Projection d'un film à la médiathèque de Saint Junien.",
   },
   {
@@ -112,7 +100,7 @@ const evenements = [
     dateISO: "2026-02-27T00:00:00",
     heure: "21 h",
     lieu: "Médiathèque, salle Laurentine Teillet",
-    affiche: evenement01,
+    affiche: "/affiches/Evenement01.jpg",
     description: "Projection d'un film à la médiathèque de Saint Junien.",
   },
   {
@@ -122,7 +110,7 @@ const evenements = [
     dateISO: "2025-11-08T00:00:00",
     heure: "de 10h à 19h",
     lieu: "Salle des fêtes de Saint Junien",
-    affiche: rencontreMultiJeux01,
+    affiche: "/affiches/RencontreMultiJeux01.jpg",
     description:
       "Rencontre Multi-Jeux à la salle des fêtes de Saint Junien. Jeux Vidéo, jeux de société, jeux de rôle et TCG.",
   },

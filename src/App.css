@@ -86,6 +86,23 @@
   background-color: var(--couleur-secondaire);
 }
 
+.bouton-inscription,
+.bouton-fermer-inscription {
+  background-color: var(--couleur-secondaire);
+  color: var(--couleur-texte-clair);
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font: inherit;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.bouton-inscription:hover,
+.bouton-fermer-inscription:hover {
+  background-color: var(--couleur-accent-violet);
+}
+
 @media (max-width: 600px) {
   .header-content {
     flex-direction: column;
@@ -432,4 +449,54 @@
     text-align: center;
     gap: 15px;
   }
+}
+
+.modal-inscription-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-inscription {
+  background-color: var(--couleur-surface);
+  padding: 30px;
+  border-radius: 12px;
+  width: calc(100% - 40px);
+  max-width: 400px;
+  box-sizing: border-box;
+}
+
+.modal-inscription h2 {
+  color: var(--couleur-principale);
+  margin-bottom: 20px;
+}
+
+.modal-inscription label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.modal-inscription input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid var(--couleur-bordure);
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.modal-inscription .bouton-inscription {
+  margin-bottom: 12px;
+}
+
+.message-confirmation {
+  background-color: #f0f8f0;
+  color: #256029;
+  padding: 15px;
+  border-radius: 8px;
+  line-height: 1.5;
 }

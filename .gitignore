@@ -22,3 +22,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Bases de données SQLite
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Variables d'environnement et informations sensibles
+.env
+.env.*
+!.env.example
